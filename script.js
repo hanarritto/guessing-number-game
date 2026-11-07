@@ -1,76 +1,77 @@
 // Guess the Number Game
-// The computer chooses a random whole number from 0 to 10.
+// The computer randomly chooses a whole number from 0 to 10.
 
-// Run one complete round of the game.
-function playRound() {
-  const secretNumber = Math.floor(Math.random() * 11);
-  let attempts = 0;
-  let guessedCorrectly = false;
+let secretNumber;
+let attempts = 0;
+let gameFinished = false;
 
-  // Keep asking until the player guesses correctly or cancels.
-  while (!guessedCorrectly) {
-    const userInput = window.prompt("Guess a number between 0 and 10:");
+const guessInput = document.getElementById("guessInput");
+const guessButton = document.getElementById("guessButton");
+const restartButton = document.getElementById("restartButton");
+const message = document.getElementById("message");
+const attemptsDisplay = document.getElementById("attempts");
 
-    // If the player presses Cancel, end this round.
-    if (userInput === null) {
-      document.getElementById("message").textContent =
-        "Game cancelled. Press Start game to play again.";
-      return false;
-    }
-
-    const guess = Number(userInput);
-
-    // Validate the input before checking the answer.
-    if (userInput.trim() === "" || !Number.isInteger(guess) || guess < 0 || guess > 10) {
-      window.alert("Please enter a whole number from 0 to 10.");
-      continue;
-    }
-
-    attempts++;
-    document.getElementById("attempts").textContent = attempts;
-
-    if (guess === secretNumber) {
-      window.alert("Yeah, you guessed it!");
-      document.getElementById("message").textContent =
-        `Correct! The secret number was ${secretNumber}. You guessed it in ${attempts} attempt(s).`;
-      document.getElementById("message").className = "message success";
-      guessedCorrectly = true;
-    } else if (guess < secretNumber) {
-      window.alert("Too low, try again.");
-    } else {
-      window.alert("Too high, try again.");
-    }
-  }
-
-  return true;
-}
-
-// Start the game and ask whether the player wants another round.
+// Start a new round and reset all game values.
 function startGame() {
-  let playAgain = true;
+  secretNumber = Math.floor(Math.random() * 11);
+  attempts = 0;
+  gameFinished = false;
 
-  document.getElementById("attempts").textContent = "0";
-  document.getElementById("message").textContent = "Game started! Check the prompt.";
-  document.getElementById("message").className = "message";
+  attemptsDisplay.textContent = attempts;
+  guessInput.value = "";
+  guessInput.disabled = false;
+  guessButton.disabled = false;
+  message.className = "message";
+  message.innerHTML = '<span class="message-icon" aria-hidden="true">🐻</span> New number, new chance! Make a guess.';
+  guessInput.focus();
+}
 
-  while (playAgain) {
-    const completed = playRound();
+// Check the user's number and display the result directly on the webpage.
+function checkGuess() {
+  if (gameFinished) return;
 
-    if (!completed) {
-      playAgain = false;
-    } else {
-      playAgain = window.confirm("Would you like to play again?");
-      if (playAgain) {
-        document.getElementById("attempts").textContent = "0";
-        document.getElementById("message").textContent = "New round! Check the prompt.";
-      }
-    }
+  const userInput = guessInput.value.trim();
+  const guess = Number(userInput);
+
+  // Check that the input is a whole number between 0 and 10.
+  if (userInput === "" || !Number.isInteger(guess) || guess < 0 || guess > 10) {
+    message.className = "message error";
+    message.innerHTML = '<span class="message-icon" aria-hidden="true">🐻‍❄️</span> Please enter a whole number from 0 to 10.';
+    guessInput.focus();
+    return;
   }
 
-  if (!playAgain) {
-    document.getElementById("message").textContent += " Thanks for playing!";
+  attempts++;
+  attemptsDisplay.textContent = attempts;
+
+  if (guess === secretNumber) {
+    message.className = "message success";
+    message.innerHTML = '<span class="message-icon" aria-hidden="true">🎉</span> You got it! The secret number was ' +
+      secretNumber + '. You guessed it in ' + attempts + ' attempt(s)!';
+    gameFinished = true;
+    guessInput.disabled = true;
+    guessButton.disabled = true;
+  } else if (guess < secretNumber) {
+    message.className = "message";
+    message.innerHTML = '<span class="message-icon" aria-hidden="true">🍯</span> Too low! Try a higher number.';
+  } else {
+    message.className = "message";
+    message.innerHTML = '<span class="message-icon" aria-hidden="true">🐾</span> Too high! Try a lower number.';
+  }
+
+  if (!gameFinished) {
+    guessInput.select();
   }
 }
 
-// Connect the Start Game button to the main function.
-document.getElementById("startButton").addEventListener("click", startGame);
+// Submit a guess when the player clicks the button or presses Enter.
+guessButton.addEventListener("click", checkGuess);
+guessInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") checkGuess();
+});
+
+// Start another round when the player clicks New Game.
+restartButton.addEventListener("click", startGame);
+
+// Prepare the first round as soon as the page loads.
+startGame();
