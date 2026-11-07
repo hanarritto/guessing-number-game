@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A simple Guess the Number game built with JavaScript functions.">
+  <title>Guess the Number | JavaScript Workshop</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="game-card">
+    <div class="eyebrow">JAVASCRIPT WORKSHOP · 06</div>
+    <div class="icon" aria-hidden="true">?</div>
+    <h1>Guess the Number</h1>
+    <p class="subtitle">I'm thinking of a number between <strong>0 and 10</strong>.<br>Can you guess it?</p>
+    <section class="game-area" aria-label="Number guessing game">
+      <p class="instruction">Press the button below to start. A prompt will ask you to guess the secret number.</p>
+      <button id="startButton" class="start-button" type="button">Start game</button>
+      <p id="message" class="message" role="status" aria-live="polite">Ready when you are!</p>
+      <div class="stats">
+        <div><span class="stat-value" id="attempts">0</span><span class="stat-label">Attempts</span></div>
+        <div><span class="stat-value">0–10</span><span class="stat-label">Number range</span></div>
+      </div>
+    </section>
+    <footer>Made with HTML, CSS & JavaScript</footer>
+  </main>
+</body>
+</html>
